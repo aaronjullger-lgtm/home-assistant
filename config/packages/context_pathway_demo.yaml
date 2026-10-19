@@ -95,6 +95,25 @@ automation:
         target:
           entity_id: timer.demo_pathway_hold
 
+  - id: demo_pathway_restart_hold_on_clear
+    alias: Demo - Restart pathway hold when entry clears
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: input_boolean.demo_entry_motion
+        to: "off"
+    condition:
+      - condition: state
+        entity_id: input_boolean.demo_pathway_light
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.demo_manual_override
+        state: "off"
+    action:
+      - service: timer.start
+        target:
+          entity_id: timer.demo_pathway_hold
+
   - id: demo_pathway_off_after_hold
     alias: Demo - Pathway light off after hold when clear
     mode: single

@@ -10,7 +10,7 @@ Status values: **Proposed**, **Implemented**, **Validated locally**, **Enabled i
 - Action: pathway light helper on + hold timer.
 - Override: manual override helper pauses automation.
 - Fallback: timer expiry turns light off only if clear.
-- Verification scenario: motion on/off with occupied/away and manual override toggles.
+- Verification scenario: motion on/off with occupied/away and manual override toggles; clear motion restarts the hold after motion remains on past the initial timer.
 - Status: **Implemented**, pending live-entity mapping.
 
 ## 2) Humidity-driven bathroom fan + shower light retention

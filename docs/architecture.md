@@ -17,7 +17,7 @@
 - Manual override beats routine automation for its scope/duration.
 - Sleep/focus/movie/guest/cleaning mode constraints are conditions, not assumptions.
 - Unknown/unavailable context never treated as false-safe.
-- Timed changes expire with explicit recovery checks.
+- Timed changes expire with explicit recovery checks; a clear-motion event restarts the pathway hold so a timer that finished while motion remained active can recover.
 - Automation modes are selected intentionally (`restart` for motion restarts, `single` for finish events, `queued` for event logging).
 
 ## Applied pattern references
