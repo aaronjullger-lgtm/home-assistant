@@ -13,7 +13,7 @@ fi
 
 echo "[2/2] Home Assistant config check"
 if command -v hass >/dev/null 2>&1; then
-  hass --script check_config --config "$repo_root/config" --secrets "$repo_root/config/secrets.example.yaml"
+  hass --script check_config --config "$repo_root/config"
 else
   echo "hass not installed; skipping Home Assistant check_config"
 fi
