@@ -24,7 +24,7 @@ This repository now includes:
 From repository root:
 
 ```bash
-bash /home/runner/work/home-assistant/home-assistant/scripts/validate.sh
+bash scripts/validate.sh
 ```
 
 The script:

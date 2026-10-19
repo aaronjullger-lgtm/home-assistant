@@ -10,7 +10,7 @@
 - Use synthetic fixtures for behavior design when device mapping is unknown.
 
 ## Validation commands
-- Primary: `bash /home/runner/work/home-assistant/home-assistant/scripts/validate.sh`
+- Primary: `bash scripts/validate.sh`
 - If `hass` is unavailable, report that HA schema validation was skipped.
 
 ## Architecture expectations

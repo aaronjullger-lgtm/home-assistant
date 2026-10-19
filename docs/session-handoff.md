@@ -8,7 +8,7 @@
 
 ## Validation results (this session)
 - `python -m pip install --quiet yamllint` ✅
-- `bash /home/runner/work/home-assistant/home-assistant/scripts/validate.sh` ✅
+- `bash scripts/validate.sh` ✅
   - YAML lint passed with `.yamllint` profile.
   - Home Assistant `check_config` skipped because `hass` binary is not installed in this sandbox.
 - GitHub Actions visibility check:
