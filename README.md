@@ -31,6 +31,12 @@ The script:
 1. Runs `yamllint` on repository YAML.
 2. Runs Home Assistant `check_config` when `hass` is available.
 
+Run the repository regression tests separately with:
+
+```bash
+python3 -m unittest discover -s tests -v
+```
+
 ## Setup notes
 
 - Keep real secrets in `config/secrets.yaml` (gitignored).

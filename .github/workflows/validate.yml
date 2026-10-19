@@ -30,3 +30,6 @@ jobs:
 
       - name: Run repository validation script
         run: bash scripts/validate.sh
+
+      - name: Run repository regression tests
+        run: python -m unittest discover -s tests -v
