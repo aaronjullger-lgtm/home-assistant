@@ -1,0 +1,31 @@
+# Example only (not included in active config):
+# Personal scene selection should require corroboration (recent arrival + door context)
+# and must fall back to neutral when identity is stale or uncertain.
+
+automation:
+  - alias: Example - Personal arrival scene with neutral fallback
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.example_entry_motion
+        to: "on"
+    condition:
+      - condition: state
+        entity_id: binary_sensor.example_recent_door_open
+        state: "on"
+    action:
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: sensor.example_identity_confidence
+                state: "high"
+              - condition: state
+                entity_id: sensor.example_identity_person
+                state: "person_a"
+            sequence:
+              - service: scene.turn_on
+                target:
+                  entity_id: scene.example_person_a_welcome
+        default:
+          - service: scene.turn_on
+            target:
+              entity_id: scene.example_neutral_welcome
