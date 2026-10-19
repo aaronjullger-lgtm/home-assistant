@@ -1,0 +1,18 @@
+# Home Assistant private/runtime data
+config/secrets.yaml
+config/.storage/
+config/*.db
+config/*.log
+config/home-assistant_v2.db*
+config/deps/
+config/tts/
+config/www/
+
+# Local/private planning and inventory details
+/docs/inventory.private.md
+
+# Python/tooling artifacts
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/

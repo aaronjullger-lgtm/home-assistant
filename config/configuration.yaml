@@ -1,0 +1,4 @@
+homeassistant:
+  packages: !include_dir_named packages
+
+# Intentionally minimal bootstrap; package files hold milestone logic.

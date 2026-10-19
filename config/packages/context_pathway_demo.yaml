@@ -1,0 +1,169 @@
+input_select:
+  demo_house_presence:
+    name: Demo House Presence
+    options:
+      - unknown
+      - home
+      - away
+    initial: unknown
+
+input_text:
+  demo_presence_provenance:
+    name: Demo Presence Provenance
+    initial: "manual_fixture"
+    max: 255
+
+input_number:
+  demo_presence_confidence:
+    name: Demo Presence Confidence
+    min: 0
+    max: 100
+    step: 1
+    initial: 50
+
+input_boolean:
+  demo_entry_motion:
+    name: Demo Entry Motion
+  demo_pathway_light:
+    name: Demo Pathway Light
+  demo_sleep_mode:
+    name: Demo Sleep Mode
+  demo_manual_override:
+    name: Demo Manual Override
+
+input_datetime:
+  demo_entry_motion_last_seen:
+    name: Demo Entry Motion Last Seen
+    has_date: true
+    has_time: true
+
+timer:
+  demo_pathway_hold:
+    name: Demo Pathway Hold
+    duration: "00:02:00"
+  demo_manual_override_hold:
+    name: Demo Manual Override Hold
+    duration: "00:15:00"
+
+template:
+  - binary_sensor:
+      - name: Demo House Occupied
+        unique_id: demo_house_occupied
+        state: "{{ is_state('input_select.demo_house_presence', 'home') }}"
+        availability: "{{ states('input_select.demo_house_presence') not in ['unknown', 'unavailable', 'none', ''] }}"
+        attributes:
+          confidence: "{{ states('input_number.demo_presence_confidence') | int(0) }}"
+          provenance: "{{ states('input_text.demo_presence_provenance') }}"
+
+automation:
+  - id: demo_record_entry_motion_last_seen
+    alias: Demo - Record entry motion timestamp
+    mode: queued
+    trigger:
+      - platform: state
+        entity_id: input_boolean.demo_entry_motion
+        to: "on"
+    action:
+      - service: input_datetime.set_datetime
+        target:
+          entity_id: input_datetime.demo_entry_motion_last_seen
+        data:
+          timestamp: "{{ as_timestamp(now()) | int }}"
+
+  - id: demo_pathway_on_entry_motion
+    alias: Demo - Entry motion turns on pathway light
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: input_boolean.demo_entry_motion
+        to: "on"
+    condition:
+      - condition: state
+        entity_id: input_boolean.demo_sleep_mode
+        state: "off"
+      - condition: state
+        entity_id: input_boolean.demo_manual_override
+        state: "off"
+      - condition: state
+        entity_id: binary_sensor.demo_house_occupied
+        state: "on"
+    action:
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.demo_pathway_light
+      - service: timer.start
+        target:
+          entity_id: timer.demo_pathway_hold
+
+  - id: demo_pathway_restart_hold_on_clear
+    alias: Demo - Restart pathway hold when entry clears
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: input_boolean.demo_entry_motion
+        to: "off"
+    condition:
+      - condition: state
+        entity_id: input_boolean.demo_pathway_light
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.demo_manual_override
+        state: "off"
+    action:
+      - service: timer.start
+        target:
+          entity_id: timer.demo_pathway_hold
+
+  - id: demo_pathway_off_after_hold
+    alias: Demo - Pathway light off after hold when clear
+    mode: single
+    trigger:
+      - platform: event
+        event_type: timer.finished
+        event_data:
+          entity_id: timer.demo_pathway_hold
+    condition:
+      - condition: state
+        entity_id: input_boolean.demo_entry_motion
+        state: "off"
+      - condition: state
+        entity_id: input_boolean.demo_manual_override
+        state: "off"
+    action:
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.demo_pathway_light
+
+  - id: demo_manual_override_auto_clear
+    alias: Demo - Manual override auto clear
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: input_boolean.demo_manual_override
+        to: "on"
+    action:
+      - service: timer.start
+        target:
+          entity_id: timer.demo_manual_override_hold
+
+  - id: demo_manual_override_expiry
+    alias: Demo - Manual override expiry recovers automation
+    mode: single
+    trigger:
+      - platform: event
+        event_type: timer.finished
+        event_data:
+          entity_id: timer.demo_manual_override_hold
+    action:
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.demo_manual_override
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: input_boolean.demo_entry_motion
+                state: "off"
+            sequence:
+              - service: input_boolean.turn_off
+                target:
+                  entity_id: input_boolean.demo_pathway_light
